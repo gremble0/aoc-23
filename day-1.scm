@@ -999,6 +999,7 @@
                   "17fkg"
                   "53ldplzx"))
 
+;; part 1:
 (define (decode-lines lines)
   (define (decode-line line)
     (define (get-number nums first last)
@@ -1013,35 +1014,46 @@
 
 (decode-lines p-input) ;; => 55029
 
+;; part 2:
+(define (first-digit str)
+  (define (first-digit-impl iter acc)
+    (cond ((null? iter) #f)
+          ((substring? "1" acc) "1")
+          ((substring? "2" acc) "2")
+          ((substring? "3" acc) "3")
+          ((substring? "4" acc) "4")
+          ((substring? "5" acc) "5")
+          ((substring? "6" acc) "6")
+          ((substring? "7" acc) "7")
+          ((substring? "8" acc) "8")
+          ((substring? "9" acc) "9")
+          ((substring? "one" acc) "1")
+          ((substring? "two" acc) "2")
+          ((substring? "three" acc) "3")
+          ((substring? "four" acc) "4")
+          ((substring? "five" acc) "5")
+          ((substring? "six" acc) "6")
+          ((substring? "seven" acc) "7")
+          ((substring? "eight" acc) "8")
+          ((substring? "nine" acc) "9")
+          (else (first-digit-impl (cdr iter) (string acc (car iter))))))
+  (first-digit-impl (string->list str) ""))
+
+(define (last-digit str)
+  (define (last-digit-impl reversed acc)
+    (display acc) (newline)
+    (cond ((null? reversed) #f)
+          ((first-digit acc) (first-digit acc))
+          (else (last-digit-impl (cdr reversed)
+                                 (string (car reversed) acc)))))
+  (last-digit-impl (reverse (string->list (string str " "))) ""))
+
+(last-digit "one2lkj5six")
+(first-digit "one2lkj5six")
+
 (define (decode-real-lines lines)
-  (define (only-nums line)
-    (define (only-nums-impl rest cur acc)
-      (cond ((null? rest) acc)
-            ((or (substring? "one" (string cur (car rest))) (eq? (car rest) #\1))
-             (only-nums-impl (cdr rest) "" (string-append acc "1")))
-            ((or (substring? "two" (string cur (car rest))) (eq? (car rest) #\2))
-             (only-nums-impl (cdr rest) "" (string-append acc "2")))
-            ((or (substring? "three" (string cur (car rest))) (eq? (car rest) #\3))
-             (only-nums-impl (cdr rest) "" (string-append acc "3")))
-            ((or (substring? "four" (string cur (car rest))) (eq? (car rest) #\4))
-             (only-nums-impl (cdr rest) "" (string-append acc "4")))
-            ((or (substring? "five" (string cur (car rest))) (eq? (car rest) #\5))
-             (only-nums-impl (cdr rest) "" (string-append acc "5")))
-            ((or (substring? "six" (string cur (car rest))) (eq? (car rest) #\6))
-             (only-nums-impl (cdr rest) "" (string-append acc "6")))
-            ((or (substring? "seven" (string cur (car rest))) (eq? (car rest) #\7))
-             (only-nums-impl (cdr rest) "" (string-append acc "7")))
-            ((or (substring? "eight" (string cur (car rest))) (eq? (car rest) #\8))
-             (only-nums-impl (cdr rest) "" (string-append acc "8")))
-            ((or (substring? "nine" (string cur (car rest))) (eq? (car rest) #\9))
-             (only-nums-impl (cdr rest) "" (string-append acc "9")))
-            (else
-              (only-nums-impl (cdr rest) (string cur (car rest)) acc))))
-    (only-nums-impl (string->list line) "" ""))
-  (decode-lines (map only-nums lines)))
+  (define (first-and-last-num line)
+    (string (first-digit line) (last-digit line)))
+  (decode-lines (map first-and-last-num lines)))
 
-(define p-input2 '("two1nine" "eighttwothree" "abcone2threexyz" "xtwone3four" "4nineeightseven2" "zoneight234" "7pqrstsixteen"))
-(define p-input3 '("six2one1onetwo233" "11"))
-
-;; "phonenjjmdzkbzftworjvcvn1eightwox"
 (decode-real-lines p-input)
