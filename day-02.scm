@@ -37,8 +37,6 @@
       #t
       #f)))
 
-(filter (lambda (x) x) '(1 2 #f 3))
-
 (define (count-games games)
   (reduce + 0
     (filter (lambda (x) x) ;; remove #f's
@@ -48,5 +46,20 @@
                  (string->number (list->string (filter char-numeric? (string->list (car game-split)))))
                  #f)))
            games))))
+
+;; part 2:
+(define (count-game game)
+  (let* ((split-game ((string-splitter 'delimiter #\;) game))
+         (game-counted (map count-round split-game)))
+    game-counted))
+
+(define (dot-max lsts)
+  (apply map max lsts))
+
+(define (count-games games)
+  (reduce + 0
+    (map (lambda (game)
+           (let ((freqs (count-game (cadr ((string-splitter 'delimiter #\:) game)))))
+             (reduce * 1 (dot-max freqs)))) games)))
 
 (count-games day-02-input)
