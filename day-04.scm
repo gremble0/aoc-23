@@ -39,6 +39,8 @@
 (reduce + 0 (map count-points (map count-wins day-04-input)))
 
 ;; part 2:
+(define scratchcards-count 0)
+
 (define (count-scratchcards scratchcards)
   (define (count-wins card)
     (let* ((card-split ((string-splitter 'delimiter #\:) card))
@@ -48,13 +50,10 @@
            (card-my-nums (parse-num-sequence (string->list (cadr card-nums)) "" '())))
       (let ((wins (length (filter (lambda (x)
                        (and x (memq x card-winning-nums))) card-my-nums))))
-        (let loop ((wins-iter wins)
-                   (extra-scratchcards wins))
-          (if (= wins-iter 0)
-            extra-scratchcards
-            (loop (- wins-iter 1)
-                  (+ extra-scratchcards
-                     (count-wins (list-ref scratchcards (- (+ card-row wins-iter) 1))))))))))
-  (+ (length scratchcards) (reduce + 0 (map count-wins day-04-input))))
+        (set! scratchcards-count (+ scratchcards-count 1))
+        (for-each (lambda (row)
+                    (count-wins (list-ref scratchcards row))) (iota wins card-row)))))
+  (for-each count-wins scratchcards))
 
+scratchcards-count
 (count-scratchcards day-04-input)
